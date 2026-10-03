@@ -1,0 +1,39 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+build/
+dist/
+
+# Test / audit runtime artifacts
+.tmp-*/
+*.log
+*_validation.txt
+*_e2e.txt
+audit_*.txt
+documentation_*_validation.txt
+coverage.out
+coverage.html
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp

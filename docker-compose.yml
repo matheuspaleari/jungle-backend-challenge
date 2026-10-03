@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: jungle-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: jungle
+      POSTGRES_USER: jungle
+      POSTGRES_PASSWORD: jungle
+    ports:
+      - "5432:5432"
+    volumes:
+      - jungle_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jungle -d jungle"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  localstack:
+    image: localstack/localstack:4
+    container_name: jungle-localstack
+    restart: unless-stopped
+    environment:
+      SERVICES: sqs
+      AWS_DEFAULT_REGION: us-east-1
+      DEBUG: "0"
+    ports:
+      - "4566:4566"
+    volumes:
+      - ./localstack/init/ready.d:/etc/localstack/init/ready.d
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.0
+    container_name: jungle-keycloak
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+
+volumes:
+  jungle_postgres_data:
